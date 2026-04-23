@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}正在閱讀：{{ manga.title }} - 第 {{ chapter.chapter_num }} 章{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reader-container { max-width: 900px; margin: 0 auto; background: #000; padding: 20px; border-radius: 8px; }
+    .manga-image { width: 100%; display: block; margin-bottom: 5px; }
+    .mode-flip .manga-image { display: none; }
+    .mode-flip .manga-image.active { display: block; }
+    .comment-section { background: white; padding: 30px; border-radius: 8px; margin-top: 30px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 bg-dark text-white p-3 rounded">
+    <div>
+        <h4 class="mb-0">{{ manga.title }}</h4>
+        <small class="text-muted">第 {{ chapter.chapter_num }} 章：{{ chapter.title }}</small>
+    </div>
+    <div class="btn-group" role="group">
+        <button type="button" id="btn-scroll" class="btn btn-outline-primary active">下拉式</button>
+        <button type="button" id="btn-flip" class="btn btn-outline-primary">翻頁式</button>
+    </div>
+    <a href="{{ url_for('manga.detail', manga_id=manga.id) }}" class="btn btn-sm btn-secondary">返回詳情</a>
+</div>
+
+<!-- 閱讀區域 -->
+<div id="reader" class="reader-container mode-scroll">
+    <!-- 假設圖片以逗號分隔或我們之後會處理路徑 -->
+    <!-- 這裡用模擬圖片展示 -->
+    <img src="https://via.placeholder.com/800x1200?text=Manga+Page+1" class="manga-image active" alt="Page 1">
+    <img src="https://via.placeholder.com/800x1200?text=Manga+Page+2" class="manga-image" alt="Page 2">
+    <img src="https://via.placeholder.com/800x1200?text=Manga+Page+3" class="manga-image" alt="Page 3">
+</div>
+
+<!-- 翻頁控制項 (僅在翻頁模式顯示) -->
+<div id="flip-controls" class="text-center mt-3 d-none">
+    <button id="prev-page" class="btn btn-light me-2">上一頁</button>
+    <span id="page-info" class="text-muted mx-3">頁數：1 / 3</span>
+    <button id="next-page" class="btn btn-light ms-2">下一頁</button>
+</div>
+
+<!-- 留言區 -->
+<div class="comment-section shadow-sm">
+    <h5 class="mb-4">讀者留言</h5>
+    
+    <!-- 發表留言表單 -->
+    <form action="{{ url_for('manga.add_comment', manga_id=manga.id) }}" method="POST" class="mb-5">
+        <input type="hidden" name="chapter_id" value="{{ chapter.id }}">
+        <input type="hidden" name="chapter_num" value="{{ chapter.chapter_num }}">
+        <div class="mb-3">
+            <input type="text" name="user_name" class="form-control" placeholder="您的暱稱" required>
+        </div>
+        <div class="mb-3">
+            <textarea name="content" class="form-control" rows="3" placeholder="說點什麼吧..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">送出留言</button>
+    </form>
+
+    <hr>
+
+    <!-- 留言列表 -->
+    <div class="mt-4">
+        {% if comments %}
+            {% for comment in comments %}
+            <div class="mb-3 p-3 bg-light rounded">
+                <div class="d-flex justify-content-between mb-2">
+                    <strong class="text-primary">{{ comment.user_name }}</strong>
+                    <small class="text-muted">{{ comment.created_at }}</small>
+                </div>
+                <p class="mb-0">{{ comment.content }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted text-center py-4">目前還沒有留言，快來搶頭香！</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const reader = document.getElementById('reader');
+    const btnScroll = document.getElementById('btn-scroll');
+    const btnFlip = document.getElementById('btn-flip');
+    const flipControls = document.getElementById('flip-controls');
+    const pages = document.querySelectorAll('.manga-image');
+    const pageInfo = document.getElementById('page-info');
+    let currentPage = 0;
+
+    // 下拉式模式
+    btnScroll.addEventListener('click', () => {
+        reader.classList.remove('mode-flip');
+        reader.classList.add('mode-scroll');
+        btnScroll.classList.add('active');
+        btnFlip.classList.remove('active');
+        flipControls.classList.add('d-none');
+        pages.forEach(p => p.style.display = 'block');
+    });
+
+    // 翻頁式模式
+    btnFlip.addEventListener('click', () => {
+        reader.classList.remove('mode-scroll');
+        reader.classList.add('mode-flip');
+        btnFlip.classList.add('active');
+        btnScroll.classList.remove('active');
+        flipControls.classList.remove('d-none');
+        updatePages();
+    });
+
+    function updatePages() {
+        pages.forEach((p, index) => {
+            p.style.display = (index === currentPage) ? 'block' : 'none';
+        });
+        pageInfo.innerText = `頁數：${currentPage + 1} / ${pages.length}`;
+    }
+
+    document.getElementById('prev-page').addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            updatePages();
+        }
+    });
+
+    document.getElementById('next-page').addEventListener('click', () => {
+        if (currentPage < pages.length - 1) {
+            currentPage++;
+            updatePages();
+        }
+    });
+</script>
+{% endblock %}

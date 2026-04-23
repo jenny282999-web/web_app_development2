@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}分類篩選結果{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">首頁</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('main.categories') }}">分類篩選</a></li>
+                <li class="breadcrumb-item active">結果</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold">篩選結果</h2>
+        <div class="mb-3">
+            {% if lang %}<span class="badge bg-dark me-1">{{ lang }}</span>{% endif %}
+            {% if type %}<span class="badge bg-dark me-1">{{ type }}</span>{% endif %}
+            {% if gender %}<span class="badge bg-dark me-1">{{ gender }}</span>{% endif %}
+        </div>
+        <p class="text-muted">共找到 {{ mangas|length }} 部作品</p>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    {% if mangas %}
+        {% for manga in mangas %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ manga.cover_image or 'https://via.placeholder.com/300x400?text=No+Cover' }}" class="card-img-top" alt="{{ manga.title }}">
+                <div class="card-body">
+                    <h5 class="card-title h6 text-truncate">{{ manga.title }}</h5>
+                    <p class="card-text small text-muted mb-2">作者：{{ manga.author or "未知" }}</p>
+                    <a href="{{ url_for('manga.detail', manga_id=manga.id) }}" class="btn btn-sm btn-primary w-100">查看詳情</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12 text-center py-5">
+            <h4>目前此分類下沒有作品</h4>
+            <p class="text-muted">試試看其他的分類組合吧！</p>
+            <a href="{{ url_for('main.categories') }}" class="btn btn-outline-primary mt-3">重新篩選</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

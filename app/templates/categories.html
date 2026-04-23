@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}分類篩選 - 漫畫推薦系統{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 text-center">
+        <h2 class="fw-bold">精確尋找您的興趣</h2>
+        <p class="text-muted">透過語言、題材與傾向，快速定位您想看的漫畫。</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 p-4">
+            <form action="{{ url_for('main.category_filter') }}" method="GET">
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold">1. 選擇語言</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <input type="radio" class="btn-check" name="lang" id="lang-all" value="" checked>
+                        <label class="btn btn-outline-secondary" for="lang-all">不限</label>
+                        {% for lang in languages %}
+                        <input type="radio" class="btn-check" name="lang" id="lang-{{ loop.index }}" value="{{ lang }}">
+                        <label class="btn btn-outline-secondary" for="lang-{{ loop.index }}">{{ lang }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">2. 選擇題材</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <input type="radio" class="btn-check" name="type" id="type-all" value="" checked>
+                        <label class="btn btn-outline-secondary" for="type-all">不限</label>
+                        {% for type in content_types %}
+                        <input type="radio" class="btn-check" name="type" id="type-{{ loop.index }}" value="{{ type }}">
+                        <label class="btn btn-outline-secondary" for="type-{{ loop.index }}">{{ type }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">3. 性別傾向</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <input type="radio" class="btn-check" name="gender" id="gender-all" value="" checked>
+                        <label class="btn btn-outline-secondary" for="gender-all">不限</label>
+                        {% for gender in gender_prefs %}
+                        <input type="radio" class="btn-check" name="gender" id="gender-{{ loop.index }}" value="{{ gender }}">
+                        <label class="btn btn-outline-secondary" for="gender-{{ loop.index }}">{{ gender }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">開始篩選</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
