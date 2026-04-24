@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}首頁 - 漫遊索引系統{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        padding: 6rem 0;
+        text-align: center;
+        background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    }
+
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        letter-spacing: -1px;
+    }
+
+    .hero-subtitle {
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        max-width: 600px;
+        margin: 0 auto 2.5rem;
+    }
+
+    /* Comic Cards */
+    .section-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-title::after {
+        content: '';
+        height: 2px;
+        flex: 1;
+        background: rgba(255, 255, 255, 0.1);
+        margin-left: 1.5rem;
+    }
+
+    .comic-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        position: relative;
+    }
+
+    .comic-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        border-color: var(--accent-primary);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .comic-cover-wrapper {
+        position: relative;
+        padding-top: 140%; /* 5:7 Aspect Ratio */
+        overflow: hidden;
+    }
+
+    .comic-cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .comic-card:hover .comic-cover {
+        transform: scale(1.1);
+    }
+
+    .comic-info {
+        padding: 1.25rem;
+    }
+
+    .comic-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .comic-author {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .tag-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--accent-primary);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        margin-right: 0.4rem;
+    }
+
+    /* Feature Blocks */
+    .feature-grid {
+        margin-top: 4rem;
+    }
+
+    .feature-item {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 24px;
+        padding: 2.5rem;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--accent-secondary);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <h1 class="hero-title">漫遊在想像的邊際</h1>
+    <p class="hero-subtitle">結合 AI 情感分析與畫風檢索，為你媒合最動心的漫畫作品，徹底終結「漫畫荒」。</p>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{{ url_for('search.ai_recommend') }}" class="btn btn-premium btn-lg">開始情感推薦</a>
+        <a href="{{ url_for('search.art_search') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">畫風檢索</a>
+    </div>
+</section>
+
+<!-- Trending Comics -->
+<section class="py-5">
+    <h2 class="section-title">熱門推薦作品</h2>
+    <div class="row g-4">
+        {% if comics %}
+            {% for comic in comics %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="{{ url_for('comic.detail', id=comic.id) }}" class="text-decoration-none text-white">
+                        <div class="comic-card">
+                            <div class="comic-cover-wrapper">
+                                <img src="{{ comic.cover_url or 'https://via.placeholder.com/300x420/1e293b/f8fafc?text=No+Cover' }}" class="comic-cover" alt="{{ comic.title }}">
+                            </div>
+                            <div class="comic-info">
+                                <div class="comic-title">{{ comic.title }}</div>
+                                <div class="comic-author">{{ comic.author }}</div>
+                                <div class="d-flex flex-wrap">
+                                    <span class="tag-badge">推薦</span>
+                                    <span class="tag-badge">熱門</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">目前尚無漫畫資料，請先初始化資料庫或新增作品。</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Feature Intro -->
+<section class="feature-grid py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-item">
+                <i class="fa-solid fa-brain feature-icon"></i>
+                <h3>情感推薦</h3>
+                <p class="text-muted">不只是分類，我們根據「致鬱」、「燃爆」等情緒指標，精準擊中你的心情。</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-item">
+                <i class="fa-solid fa-eye feature-icon"></i>
+                <h3>畫風檢索</h3>
+                <p class="text-muted">上傳一張你喜歡的風格截圖，AI 將自動為你尋找視覺風格相近的作品。</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-item">
+                <i class="fa-solid fa-book-bookmark feature-icon"></i>
+                <h3>跨平台書櫃</h3>
+                <p class="text-muted">整合 LINE Webtoon、Kakao 等各大平台，一站式管理你的閱讀進度。</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

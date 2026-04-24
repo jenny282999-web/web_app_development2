@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}畫風搜尋 - 漫遊索引系統{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        text-align: center;
+    }
+
+    .drop-zone {
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        padding: 4rem 2rem;
+        background: rgba(255, 255, 255, 0.02);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .drop-zone:hover, .drop-zone.drag-over {
+        border-color: var(--accent-secondary);
+        background: rgba(168, 85, 247, 0.05);
+    }
+
+    .upload-icon {
+        font-size: 3.5rem;
+        color: var(--accent-secondary);
+        margin-bottom: 1.5rem;
+    }
+
+    #file-input {
+        display: none;
+    }
+
+    .preview-container {
+        display: none;
+        margin-top: 2rem;
+    }
+
+    #preview-img {
+        max-width: 100%;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+    <h1 class="display-6 fw-bold mb-3">視覺系搜尋</h1>
+    <p class="text-muted mb-5">上傳你喜歡的漫畫截圖，AI 將分析線條與色彩風格為你媒合。</p>
+
+    <form action="{{ url_for('search.art_search') }}" method="POST" enctype="multipart/form-data">
+        <label for="file-input" class="drop-zone w-100" id="drop-zone">
+            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+            <h4 class="mb-2">點擊或拖放圖片至此</h4>
+            <p class="text-muted small">支援 JPG, PNG 格式 (最大 5MB)</p>
+            <input type="file" name="style_image" id="file-input" accept="image/*" onchange="previewFile()">
+        </label>
+
+        <div class="preview-container" id="preview-container">
+            <img id="preview-img" src="" alt="預覽圖">
+            <div class="mt-4">
+                <button type="submit" class="btn btn-premium px-5 py-3">
+                    <i class="fa-solid fa-eye me-2"></i>分析畫風並搜尋
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function previewFile() {
+        const preview = document.getElementById('preview-img');
+        const container = document.getElementById('preview-container');
+        const dropZone = document.getElementById('drop-zone');
+        const file = document.querySelector('input[type=file]').files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+            container.style.display = "block";
+            dropZone.style.display = "none";
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+{% endblock %}

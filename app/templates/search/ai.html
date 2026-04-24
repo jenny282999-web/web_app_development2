@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}情感推薦 - 漫遊索引系統{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-container {
+        max-width: 800px;
+        margin: 4rem auto;
+        text-align: center;
+    }
+
+    .tag-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 3rem;
+    }
+
+    /* Custom Checkbox as Tag Chips */
+    .tag-checkbox {
+        display: none;
+    }
+
+    .tag-label {
+        padding: 0.8rem 1.8rem;
+        border-radius: 50px;
+        background: var(--card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+        user-select: none;
+    }
+
+    .tag-label:hover {
+        border-color: var(--accent-primary);
+        transform: translateY(-3px);
+    }
+
+    .tag-checkbox:checked + .tag-label {
+        background: var(--gradient);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .search-hint {
+        margin-top: 4rem;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <h1 class="display-5 fw-bold mb-3">你現在的心情是？</h1>
+    <p class="text-muted fs-5">選擇一個或多個標籤，AI 將為你媒合最適合當下心境的漫畫。</p>
+
+    <form action="{{ url_for('search.ai_recommend') }}" method="POST">
+        <div class="tag-cloud">
+            {% for tag in tags %}
+                <input type="checkbox" name="tags" value="{{ tag }}" id="tag-{{ loop.index }}" class="tag-checkbox">
+                <label for="tag-{{ loop.index }}" class="tag-label">{{ tag }}</label>
+            {% endfor %}
+        </div>
+
+        <div class="mt-5">
+            <button type="submit" class="btn btn-premium btn-lg px-5">
+                <i class="fa-solid fa-wand-magic-sparkles me-2"></i>探索我的命定漫畫
+            </button>
+        </div>
+    </form>
+
+    <div class="search-hint">
+        <i class="fa-solid fa-circle-info me-2"></i>
+        標籤可以多選，選取的標籤越多，推薦的風格會越精確。
+    </div>
+</div>
+{% endblock %}

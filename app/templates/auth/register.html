@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}註冊 - 漫遊索引系統{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 450px;
+        margin: 4rem auto;
+        background: var(--card-bg);
+        padding: 3rem;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .auth-header h2 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-label {
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+    }
+
+    .form-control {
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 0.8rem 1.2rem;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        background: rgba(15, 23, 42, 0.8);
+        border-color: var(--accent-secondary);
+        box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        color: white;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: var(--text-muted);
+    }
+
+    .auth-footer a {
+        color: var(--accent-secondary);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-header">
+        <h2>建立新帳號</h2>
+        <p class="text-muted">加入漫遊索引，開啟你的漫畫探索之旅</p>
+    </div>
+
+    <form action="{{ url_for('auth.register') }}" method="POST">
+        <div class="mb-4">
+            <label for="username" class="form-label">使用者名稱</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="建議 3-20 個字元" required>
+        </div>
+        <div class="mb-4">
+            <label for="email" class="form-label">電子郵件</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="example@mail.com" required>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="form-label">設定密碼</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="請輸入密碼" required>
+        </div>
+        
+        <button type="submit" class="btn btn-premium w-100 py-3 mt-2">
+            同意條款並註冊
+        </button>
+    </form>
+
+    <div class="auth-footer">
+        已經有帳號了嗎？ <a href="{{ url_for('auth.login') }}">立即登入</a>
+    </div>
+</div>
+{% endblock %}
